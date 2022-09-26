@@ -1,0 +1,414 @@
+// **************************************************
+// Custom code for UD03Form
+// Created: 9/21/2022 8:58:40 AM
+// **************************************************
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Windows.Forms;
+using Ice.BO;
+using Ice.UI;
+using Ice.Lib;
+using Ice.Adapters;
+using Ice.Lib.Customization;
+using Ice.Lib.ExtendedProps;
+using Ice.Lib.Framework;
+using Ice.Lib.Searches;
+using Ice.UI.FormFunctions;
+using Erp.Adapters;
+
+public class Script
+{
+	// ** Wizard Insert Location - Do Not Remove 'Begin/End Wizard Added Module Level Variables' Comments! **
+		// Begin Wizard Added Module Level Variables **
+	
+	private UD04Adapter _ud04Adapter;
+	private EpiDataView _edvUD03;
+	private DataTable UD04_Column;
+	private EpiDataView _edvUD04;
+	private string _Key1UD04;
+	private string _Key2UD04;
+	private string _Key3UD04;
+	private string _Key4UD04;
+	private string _Key5UD04;
+	private DataView UD03_DataView;
+	// End Wizard Added Module Level Variables **
+
+	// Add Custom Module Level Variables Here **
+
+	public void InitializeCustomCode()
+	{	
+		// ** Wizard Insert Location - Do not delete 'Begin/End Wizard Added Variable Initialization' lines **
+		// Begin Wizard Added Variable Initialization
+	
+		InitializeUD04Adapter();
+		this._Key1UD04 = string.Empty;
+		this._Key2UD04 = string.Empty;
+		this._Key3UD04 = string.Empty;
+		this._Key4UD04 = string.Empty;
+		this._Key5UD04 = string.Empty;
+		this.baseToolbarsManager.ToolClick += new Infragistics.Win.UltraWinToolbars.ToolClickEventHandler(this.baseToolbarsManager_ToolClickForUD04);
+		this.UD03Form.BeforeToolClick += new Ice.Lib.Framework.BeforeToolClickEventHandler(this.UD03Form_BeforeToolClickForUD04);
+		this.UD03Form.AfterToolClick += new Ice.Lib.Framework.AfterToolClickEventHandler(this.UD03Form_AfterToolClickForUD04);
+		this.UD03_Row.EpiRowChanged += new EpiRowChanged(this.UD03_AfterRowChangeForUD04);
+		this.UD03_DataView = this.UD03_Row.dataView;
+		this.UD03_DataView.ListChanged += new ListChangedEventHandler(this.UD03_DataView_ListChangedForUD04);
+		this.UD03_Row.BeforeResetDataView += new Ice.Lib.Framework.EpiDataView.BeforeResetDataViewDelegate(this.UD03_BeforeResetDataViewForUD04);
+		this.UD03_Row.AfterResetDataView += new Ice.Lib.Framework.EpiDataView.AfterResetDataViewDelegate(this.UD03_AfterResetDataViewForUD04);
+		// End Wizard Added Variable Initialization
+
+		// Begin Wizard Added Custom Method Calls
+
+		// End Wizard Added Custom Method Calls
+	}
+
+	public void DestroyCustomCode()
+	{
+		// ** Wizard Insert Location - Do not delete 'Begin/End Wizard Added Object Disposal' lines **
+		// Begin Wizard Added Object Disposal
+
+		if ((this._ud04Adapter != null))
+		{
+			this._ud04Adapter.Dispose();
+			this._ud04Adapter = null;
+		}
+		this._edvUD04 = null;
+		this._edvUD03 = null;
+		this.UD04_Column = null;
+		this._Key1UD04 = null;
+		this._Key2UD04 = null;
+		this._Key3UD04 = null;
+		this._Key4UD04 = null;
+		this._Key5UD04 = null;
+		this.baseToolbarsManager.ToolClick -= new Infragistics.Win.UltraWinToolbars.ToolClickEventHandler(this.baseToolbarsManager_ToolClickForUD04);
+		this.UD03Form.BeforeToolClick -= new Ice.Lib.Framework.BeforeToolClickEventHandler(this.UD03Form_BeforeToolClickForUD04);
+		this.UD03Form.AfterToolClick -= new Ice.Lib.Framework.AfterToolClickEventHandler(this.UD03Form_AfterToolClickForUD04);
+		this.UD03_Row.EpiRowChanged -= new EpiRowChanged(this.UD03_AfterRowChangeForUD04);
+		this.UD03_DataView.ListChanged -= new ListChangedEventHandler(this.UD03_DataView_ListChangedForUD04);
+		this.UD03_DataView = null;
+		this.UD03_Row.BeforeResetDataView -= new Ice.Lib.Framework.EpiDataView.BeforeResetDataViewDelegate(this.UD03_BeforeResetDataViewForUD04);
+		this.UD03_Row.AfterResetDataView -= new Ice.Lib.Framework.EpiDataView.AfterResetDataViewDelegate(this.UD03_AfterResetDataViewForUD04);
+		// End Wizard Added Object Disposal
+
+		// Begin Custom Code Disposal
+
+		// End Custom Code Disposal
+	}
+
+	private void InitializeUD04Adapter()
+	{
+		// Create an instance of the Adapter.
+		this._ud04Adapter = new UD04Adapter(this.oTrans);
+		this._ud04Adapter.BOConnect();
+
+		// Add Adapter Table to List of Views
+		// This allows you to bind controls to the custom UD Table
+		this._edvUD04 = new EpiDataView();
+		this._edvUD04.dataView = new DataView(this._ud04Adapter.UD04Data.UD04);
+		this._edvUD04.AddEnabled = true;
+		this._edvUD04.AddText = "New UD04";
+		if ((this.oTrans.EpiDataViews.ContainsKey("UD04View") == false))
+		{
+			this.oTrans.Add("UD04View", this._edvUD04);
+		}
+
+		// Initialize DataTable variable
+		this.UD04_Column = this._ud04Adapter.UD04Data.UD04;
+
+		// Initialize EpiDataView field.
+		this._edvUD03 = ((EpiDataView)(this.oTrans.EpiDataViews["UD03"]));
+
+		// Set the parent view / keys for UD child view
+		string[] parentKeyFields = new string[4];
+		string[] childKeyFields = new string[4];
+		parentKeyFields[0] = "Key1";
+		childKeyFields[0] = "Key1";
+		parentKeyFields[1] = "Key2";
+		childKeyFields[1] = "Key2";
+		parentKeyFields[2] = "Character01";
+		childKeyFields[2] = "Key3";
+		parentKeyFields[3] = "Character02";
+		childKeyFields[3] = "Key4";
+		this._edvUD04.SetParentView(this._edvUD03, parentKeyFields, childKeyFields);
+
+		if ((this.oTrans.PrimaryAdapter != null))
+		{
+			// this.oTrans.PrimaryAdapter.GetCurrentDataSet(Ice.Lib.Searches.DataSetMode.RowsDataSet).Tables.Add(this._edvUD04.dataView.Table.Clone())
+		}
+		
+	}
+
+	private void GetUD04Data(string key1, string key2, string key3, string key4, string key5)
+	{
+		if ((this._Key1UD04 != key1) || (this._Key2UD04 != key2) || (this._Key3UD04 != key3) || (this._Key4UD04 != key4) || (this._Key5UD04 != key5))
+		{
+			// Build where clause for search.
+			string whereClause = "Key1 = \'" + key1 + "\' And Key2 = \'" + key2 + "\' And Key3 = \'" + key3 + "\' And Key4 = \'" + key4 + "\'";
+			System.Collections.Hashtable whereClauses = new System.Collections.Hashtable(1);
+			whereClauses.Add("UD04", whereClause);
+
+			// Call the adapter search.
+			SearchOptions searchOptions = SearchOptions.CreateRuntimeSearch(whereClauses, DataSetMode.RowsDataSet);
+			this._ud04Adapter.InvokeSearch(searchOptions);
+
+			if ((this._ud04Adapter.UD04Data.UD04.Rows.Count > 0))
+			{
+				this._edvUD04.Row = 0;
+			} else
+			{
+				this._edvUD04.Row = -1;
+			}
+
+			// Notify that data was updated.
+			this._edvUD04.Notify(new EpiNotifyArgs(this.oTrans, this._edvUD04.Row, this._edvUD04.Column));
+
+			// Set key fields to their new values.
+			this._Key1UD04 = key1;
+			this._Key2UD04 = key2;
+			this._Key3UD04 = key3;
+			this._Key4UD04 = key4;
+			this._Key5UD04 = key5;
+		}
+	}
+
+	private void GetNewUD04Record()
+	{
+		DataRow parentViewRow = this._edvUD03.CurrentDataRow;
+		// Check for existence of Parent Row.
+		if ((parentViewRow == null))
+		{
+			return;
+		}
+		if (this._ud04Adapter.GetaNewUD04())
+		{
+			string key1 = parentViewRow["Key1"].ToString();
+			string key2 = parentViewRow["Key2"].ToString();
+			string character01 = parentViewRow["Character01"].ToString();
+			string character02 = parentViewRow["Character02"].ToString();
+
+			// Get unique row count id for Key5
+			int rowCount = this._ud04Adapter.UD04Data.UD04.Rows.Count;
+			int lineNum = rowCount;
+			bool goodIndex = false;
+			while ((goodIndex == false))
+			{
+				// Check to see if index exists
+				DataRow[] matchingRows = this._ud04Adapter.UD04Data.UD04.Select("Key5 = \'" + lineNum.ToString() + "\'");
+				if ((matchingRows.Length > 0))
+				{
+					lineNum = (lineNum + 1);
+				} else
+				{
+					goodIndex = true;
+				}
+			}
+
+			// Set initial UD Key values
+			DataRow editRow = this._ud04Adapter.UD04Data.UD04.Rows[(rowCount - 1)];
+			editRow.BeginEdit();
+			editRow["Key1"] = key1;
+			editRow["Key2"] = key2;
+			editRow["Key3"] = character01;
+			editRow["Key4"] = character02;
+			editRow["Key5"] = lineNum.ToString();
+			editRow.EndEdit();
+
+			// Notify that data was updated.
+			this._edvUD04.Notify(new EpiNotifyArgs(this.oTrans, (rowCount - 1), this._edvUD04.Column));
+		}
+	}
+
+	private void SaveUD04Record()
+	{
+		// Save adapter data
+		this._ud04Adapter.Update();
+	}
+
+	private void DeleteUD04Record()
+	{
+		// Check to see if deleted view is ancestor view
+		bool isAncestorView = false;
+		Ice.Lib.Framework.EpiDataView parView = this._edvUD04.ParentView;
+		while ((parView != null))
+		{
+			if ((this.oTrans.LastView == parView))
+			{
+				isAncestorView = true;
+				break;
+			} else
+			{
+				parView = parView.ParentView;
+			}
+		}
+
+		// If Ancestor View then delete all child rows
+		if (isAncestorView)
+		{
+			DataRow[] drsDeleted = this._ud04Adapter.UD04Data.UD04.Select("Key1 = \'" + this._Key1UD04 + "\' AND Key2 = \'" + this._Key2UD04 + "\' AND Key3 = \'" + this._Key3UD04 + "\' AND Key4 = \'" + this._Key4UD04 + "\'");
+			for (int i = 0; (i < drsDeleted.Length); i = (i + 1))
+			{
+				this._ud04Adapter.Delete(drsDeleted[i]);
+			}
+		} else
+		{
+			if ((this.oTrans.LastView == this._edvUD04))
+			{
+				if ((this._edvUD04.Row >= 0))
+				{
+					DataRow drDeleted = ((DataRow)(this._ud04Adapter.UD04Data.UD04.Rows[this._edvUD04.Row]));
+					if ((drDeleted != null))
+					{
+						if (this._ud04Adapter.Delete(drDeleted))
+						{
+							if ((_edvUD04.Row > 0))
+							{
+								_edvUD04.Row = (_edvUD04.Row - 1);
+							}
+
+							// Notify that data was updated.
+							this._edvUD04.Notify(new EpiNotifyArgs(this.oTrans, this._edvUD04.Row, this._edvUD04.Column));
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void UndoUD04Changes()
+	{
+		this._ud04Adapter.UD04Data.RejectChanges();
+
+		// Notify that data was updated.
+		this._edvUD04.Notify(new EpiNotifyArgs(this.oTrans, this._edvUD04.Row, this._edvUD04.Column));
+	}
+
+	private void ClearUD04Data()
+	{
+		this._Key1UD04 = string.Empty;
+		this._Key2UD04 = string.Empty;
+		this._Key3UD04 = string.Empty;
+		this._Key4UD04 = string.Empty;
+		this._Key5UD04 = string.Empty;
+
+		this._ud04Adapter.UD04Data.Clear();
+
+		// Notify that data was updated.
+		this._edvUD04.Notify(new EpiNotifyArgs(this.oTrans, this._edvUD04.Row, this._edvUD04.Column));
+	}
+
+	private void baseToolbarsManager_ToolClickForUD04(object sender, Infragistics.Win.UltraWinToolbars.ToolClickEventArgs args)
+	{
+		// EpiMessageBox.Show(args.Tool.Key);
+		switch (args.Tool.Key)
+		{
+			case "EpiAddNewNew UD04":
+				GetNewUD04Record();
+				break;
+
+			case "ClearTool":
+				ClearUD04Data();
+				break;
+
+			case "UndoTool":
+				UndoUD04Changes();
+				break;
+		}
+	}
+
+	private void UD03Form_BeforeToolClickForUD04(object sender, Ice.Lib.Framework.BeforeToolClickEventArgs args)
+	{
+		// EpiMessageBox.Show(args.Tool.Key);
+		switch (args.Tool.Key)
+		{
+			case "SaveTool":
+				SaveUD04Record();
+				break;
+		}
+	}
+
+	private void UD03Form_AfterToolClickForUD04(object sender, Ice.Lib.Framework.AfterToolClickEventArgs args)
+	{
+		// EpiMessageBox.Show(args.Tool.Key);
+		switch (args.Tool.Key)
+		{
+			case "DeleteTool":
+				if ((args.Cancelled == false))
+				{
+					DeleteUD04Record();
+				}
+				break;
+		}
+	}
+
+	private void UD03_AfterRowChangeForUD04(EpiRowChangedArgs args)
+	{
+		// ** add AfterRowChange event handler
+		string key1 = args.CurrentView.dataView[args.CurrentRow]["Key1"].ToString();
+		string key2 = args.CurrentView.dataView[args.CurrentRow]["Key2"].ToString();
+		string character01 = args.CurrentView.dataView[args.CurrentRow]["Character01"].ToString();
+		string character02 = args.CurrentView.dataView[args.CurrentRow]["Character02"].ToString();
+		GetUD04Data(key1, key2, character01, character02, string.Empty);
+	}
+
+	private void UD03_DataView_ListChangedForUD04(object sender, ListChangedEventArgs args)
+	{
+		// ** add ListChanged event handler
+		string key1 = UD03_DataView[0]["Key1"].ToString();
+		string key2 = UD03_DataView[0]["Key2"].ToString();
+		string character01 = UD03_DataView[0]["Character01"].ToString();
+		string character02 = UD03_DataView[0]["Character02"].ToString();
+		GetUD04Data(key1, key2, character01, character02, string.Empty);
+	}
+
+	private void UD03_BeforeResetDataViewForUD04(object sender, EventArgs args)
+	{
+		// ** remove ListChanged event handler
+		this.UD03_DataView.ListChanged -= new ListChangedEventHandler(this.UD03_DataView_ListChangedForUD04);
+	}
+
+	private void UD03_AfterResetDataViewForUD04(object sender, EventArgs args)
+	{
+		// ** reassign DataView and add ListChanged event handler
+		this.UD03_DataView = this.UD03_Row.dataView;
+		this.UD03_DataView.ListChanged += new ListChangedEventHandler(this.UD03_DataView_ListChangedForUD04);
+	}
+
+	private void UD03Form_Load(object sender, EventArgs args)
+	{
+		//show the Dropdown(TXCombo)inside the grid.
+		gridviewX.DisplayLayout.Bands[0].Columns["Character02"].ValueList = TxCombo;
+		gridviewX.DisplayLayout.Bands[0].Columns["Character02"].Style = Infragistics.Win.UltraWinGrid.ColumnStyle.DropDownList;
+		TxCombo.ForceRefreshList();
+		//show Ud04 table results from the demo db server/Populate them in a grid.
+        string whereClause = string.Empty;
+        System.Collections.Hashtable whereClauses = new System.Collections.Hashtable(1);
+        whereClauses.Add("UD04", whereClause);
+        SearchOptions searchOptions = SearchOptions.CreateRuntimeSearch(whereClauses, DataSetMode.RowsDataSet);
+        this._ud04Adapter.InvokeSearch(searchOptions);  
+		SearchOnTaxRgnAdapterFillDropDown();       
+                 
+
+	}
+		
+	private void SearchOnTaxRgnAdapterFillDropDown()
+	{
+		// Wizard Generated Search Method
+		// You will need to call this method from another method in custom code
+		// For example, [Form]_Load or [Button]_Click
+
+		bool recSelected;
+		string whereClause = string.Empty;
+		System.Data.DataSet dsTaxRgnAdapter = Ice.UI.FormFunctions.SearchFunctions.listLookup(this.oTrans, "TaxRgnAdapter", out recSelected, false, whereClause);
+		if (recSelected)
+		{
+			// Set EpiUltraCombo Properties
+			this.TxCombo.ValueMember = "TaxRegionCode";
+			this.TxCombo.DataSource = dsTaxRgnAdapter;
+			this.TxCombo.DisplayMember = "Description";
+			string[] fields = new string[] {
+					"Description"};
+			this.TxCombo.SetColumnFilter(fields);
+		}
+	}
+}
