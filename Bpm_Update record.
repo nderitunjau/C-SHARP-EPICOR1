@@ -1,0 +1,17 @@
+var tempXRow=(from Pt in ttUD04  where Pt.RowMod == "U" select Pt).FirstOrDefault();
+if(tempXRow != null)
+{
+  using (var txScope = IceContext.CreateDefaultTransactionScope())
+  {
+    UD01 newRow = new UD01();
+    Db.UD01.Insert(newRow);
+    newRow.Company = "EPIC06";
+    newRow.Key1 = tempXRow.Key1;
+    newRow.Key2 = tempXRow.Key2;
+    newRow.Character01 = tempXRow.Character01;
+    newRow.Character02 = tempXRow.Character02;
+    Db.Validate();
+    txScope.Complete();
+  }
+}
+
